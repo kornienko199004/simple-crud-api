@@ -1,33 +1,17 @@
 const url = 'http://127.0.0.1:3000';
 const axios = require('axios')
 
-// axios
-//   .post('https://whatever.com/todos', {
-//     todo: 'Buy the milk'
-//   })
-//   .then(res => {
-//     console.log(`statusCode: ${res.status}`)
-//     console.log(res)
-//   })
-//   .catch(error => {
-//     console.error(error)
-//   })
-
 const config = {
   getPersons: 'person',
-}
-const HttpHelper = require('./helpers/httpHelper');
-
-const http = new HttpHelper();
+};
 
 describe('HTTP methods should works', () => {
   it('GET: should return person', async () => {
     const expected = [];
-    // const res = await http.get(`${url}/${config.getPersons}`);
     const res = await axios.get(`${url}/${config.getPersons}`);
-    // const data = JSON.parse(res);
     const data = res.data;
-    console.log('data', data)
+
+    expect(res.status).toEqual(200);
     expect(data).toEqual(expected);
   });
 
@@ -38,8 +22,45 @@ describe('HTTP methods should works', () => {
     };
     const res = await axios.post(`${url}/${config.getPersons}`, expected);
     const data = res.data;
+
+    expect(res.status).toEqual(200);
+    expect(data).toMatchObject(expected);
+  });
+
+  it('GET: should return user by id', async () => {
+    const person = {
+      name: 'Aleksey',
+      age: 31
+    };
+    let res = await axios.post(`${url}/${config.getPersons}`, person);
+    let data = res.data;
     console.log(data);
 
-    expect(data).toMatchObject(expected)
+    const id = data.id;
+
+    res = await axios.get(`${url}/${config.getPersons}/${id}`);
+    data = res.data;
+
+    expect(res.status).toEqual(200);
+    expect(data).toMatchObject(person);
+  });
+
+  it('PUT: should update and return person', async () => {
+    const expected = {
+      name: 'Aleksey',
+      age: 31
+    };
+
+    let res = await axios.post(`${url}/${config.getPersons}`, expected);
+    let data = res.data;
+    const id = data.id;
+
+    expected.name = 'Andrey';
+
+    res = await axios.put(`${url}/${config.getPersons}/${id}`, expected);
+    data = res.data;
+
+    expect(res.status).toEqual(200);
+    expect(data).toMatchObject(expected);
   });
 });
