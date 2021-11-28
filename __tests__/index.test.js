@@ -63,4 +63,35 @@ describe('HTTP methods should works', () => {
     expect(res.status).toEqual(200);
     expect(data).toMatchObject(expected);
   });
+
+  it('DELETE: should delete person by id', async () => {
+    const expected = {
+      name: 'Aleksey',
+      age: 31
+    };
+
+    let res = await axios.post(`${url}/${config.getPersons}`, expected);
+    let data = res.data;
+    const id = data.id;
+
+    res = await axios.delete(`${url}/${config.getPersons}/${id}`);
+    data = res.data;
+    expect(res.status).toEqual(204);
+
+    try {
+      res = await axios.get(`${url}/${config.getPersons}/${id}`);
+    } catch(error) {
+      expect(error).toEqual(Error("Request failed with status code 404"));
+    }
+  });
+});
+
+describe('Errors Tasks', () => {
+  it('GET: wrong path status should be 404', async () => {
+    try {
+      const res = await axios.get(`${url}/${config.getPersons}123`);
+    } catch(error) {
+      expect(error).toEqual(Error("Request failed with status code 404"));
+    }
+  });
 });

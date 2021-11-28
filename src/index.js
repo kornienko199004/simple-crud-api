@@ -30,6 +30,7 @@ const server = http.createServer((req, res) => {
 
   if (route === 'person' && req.method === 'GET' && !param) {
     res.end(JSON.stringify(persons.getData()));
+    return;
   }
 
   if (route === 'person' && req.method === 'GET' && param) {
@@ -43,6 +44,7 @@ const server = http.createServer((req, res) => {
       res.statusCode = 400;
       res.end('Wrong request');
     }
+    return;
   }
 
   if (route === 'person' && req.method === 'POST' && !param) {
@@ -55,6 +57,7 @@ const server = http.createServer((req, res) => {
       const row = persons.add(JSON.parse(data));
       res.end(JSON.stringify(row));
     });
+    return;
   }
 
   if (route === 'person' && req.method === 'PUT' && param) {
@@ -78,21 +81,28 @@ const server = http.createServer((req, res) => {
       res.statusCode = 400;
       res.end('Wrong request');
     }
+    return;
   }
 
-  // uuid.validate()
-  // if (req.url.includes('/person') && req.method === 'GET') {
-  //   let data = '';
-  //   req.on('data', chunk => {
-  //     data += chunk;
-  //   });
-
-  //   req.on('end', () => {
-  //     const row = persons.add(JSON.parse(data));
-  //     res.end(JSON.stringify(row));
-  //   });
-  // }
-
+  if (route === 'person' && req.method === 'DELETE' && param) {
+    if (validator.validateId(param)) {
+      const row = persons.getRowById(param);
+      if (!row) {
+        res.statusCode = 404;
+        res.end();
+      } else {
+        persons.deleteById(param);
+        res.statusCode = 204;
+        res.end();
+      }
+    } else {
+      res.statusCode = 400;
+      res.end('Wrong request');
+    }
+    return;
+  }
+  res.statusCode = 404;
+  res.end('Wrong request');
 });
 
 server.listen(port, hostname, () => {

@@ -19,6 +19,11 @@ Persons.prototype.update = function(id, row) {
   return updatedRow;
 }
 
+Persons.prototype.deleteById = function(id, row) {
+  const index = this.data.findIndex((item) => item.id === id);
+  this.data.splice(index, 1);
+}
+
 Persons.prototype.add = function(row) {
   row.id = uuidv1();
   this.data.push(row);
