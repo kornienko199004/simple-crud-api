@@ -1,5 +1,9 @@
-const url = 'http://127.0.0.1:3000';
+require('dotenv').config()
 const axios = require('axios')
+
+const hostname = process.env.HOST;
+const port = process.env.PORT;
+const url = `http://${hostname}:${port}`;
 
 const config = {
   getPersons: 'person',
