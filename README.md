@@ -7,7 +7,8 @@ Simple CRUD api with node.js http
 
 **npm install** - install all dependencies
 
-**npm run start:dev** - running in dev mode ors
+**npm run start:dev** - running in dev mode or
+
 **npm run start:prod** - running in prod mode
 
 ## Running tests
