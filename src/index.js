@@ -1,10 +1,10 @@
 const http = require('http');
-const { URL } = require('url');
-const PersonsModel = require('./models/persons');
-const Validator = require('./validators/index');
+const personRoutes = require('./routes/persons');
+// const PersonsModel = require('./models/persons');
+// const Validator = require('./validators/index');
 
-const persons = new PersonsModel();
-const validator = new Validator();
+// const persons = new PersonsModel();
+// const validator = new Validator();
 
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -13,96 +13,94 @@ const server = http.createServer((req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
 
-  // console.log(req);
-  console.log(req.path);
-  console.log(req.method);
-  console.log(req.url);
-  // console.log(new URL(req.url).parse());
-
   const url = req.url.split('/');
-  console.log(url);
-
   const route = url.slice(1, 2)[0];
   const param = url.slice(2)[0];
 
-  console.log(route);
-  console.log(param);
+  personRoutes(req, res);
 
-  if (route === 'person' && req.method === 'GET' && !param) {
-    res.end(JSON.stringify(persons.getData()));
-    return;
-  }
+  // if (route === 'person' && req.method === 'GET' && !param) {
+  //   res.end(JSON.stringify(persons.getData()));
+  //   return;
+  // }
 
-  if (route === 'person' && req.method === 'GET' && param) {
-    if (validator.validateId(param)) {
-      const row = persons.getRowById(param);
-      if (!row) {
-        res.statusCode = 404;
-      }
-      res.end(JSON.stringify(row));
-    } else {
-      res.statusCode = 400;
-      res.end('Wrong request');
-    }
-    return;
-  }
+  // if (route === 'person' && req.method === 'GET' && param) {
+  //   if (validator.validateId(param)) {
+  //     const row = persons.getRowById(param);
+  //     if (!row) {
+  //       res.statusCode = 404;
+  //     }
+  //     res.end(JSON.stringify(row));
+  //   } else {
+  //     res.statusCode = 400;
+  //     res.end('Wrong request');
+  //   }
+  //   return;
+  // }
 
-  if (route === 'person' && req.method === 'POST' && !param) {
-    let data = '';
-    req.on('data', chunk => {
-      data += chunk;
-    });
+  // if (route === 'person' && req.method === 'POST' && !param) {
+  //   let data = '';
+  //   req.on('data', chunk => {
+  //     data += chunk;
+  //   });
 
-    req.on('end', () => {
-      const row = persons.add(JSON.parse(data));
-      res.end(JSON.stringify(row));
-    });
-    return;
-  }
+  //   req.on('end', () => {
+  //     if (!validator.validateFields(JSON.parse(data))) {
+  //       res.statusCode = 400;
+  //       res.end();
+  //     } else {
+  //       const row = persons.add(JSON.parse(data));
+  //       res.statusCode = 201;
+  //       res.end(JSON.stringify(row));
+  //     }
+  //   });
+  //   return;
+  // }
 
-  if (route === 'person' && req.method === 'PUT' && param) {
-    if (validator.validateId(param)) {
-      const row = persons.getRowById(param);
-      if (!row) {
-        res.statusCode = 404;
-        res.end();
-      }
+  // if (route === 'person' && req.method === 'PUT' && param) {
+  //   if (validator.validateId(param)) {
+  //     const row = persons.getRowById(param);
+  //     if (!row) {
+  //       res.statusCode = 404;
+  //       res.end();
+  //       return;
+  //     }
       
-      let data = '';
-      req.on('data', chunk => {
-        data += chunk;
-      });
+  //     let data = '';
+  //     req.on('data', chunk => {
+  //       data += chunk;
+  //     });
 
-      req.on('end', () => {
-        const row = persons.update(param, JSON.parse(data));
-        res.end(JSON.stringify(row));
-      });
-    } else {
-      res.statusCode = 400;
-      res.end('Wrong request');
-    }
-    return;
-  }
+  //     req.on('end', () => {
+  //       const row = persons.update(param, JSON.parse(data));
+  //       res.end(JSON.stringify(row));
+  //     });
+  //   } else {
+  //     res.statusCode = 400;
+  //     res.end('Wrong request');
+  //   }
+  //   return;
+  // }
 
-  if (route === 'person' && req.method === 'DELETE' && param) {
-    if (validator.validateId(param)) {
-      const row = persons.getRowById(param);
-      if (!row) {
-        res.statusCode = 404;
-        res.end();
-      } else {
-        persons.deleteById(param);
-        res.statusCode = 204;
-        res.end();
-      }
-    } else {
-      res.statusCode = 400;
-      res.end('Wrong request');
-    }
-    return;
-  }
-  res.statusCode = 404;
-  res.end('Wrong request');
+  // if (route === 'person' && req.method === 'DELETE' && param) {
+  //   if (validator.validateId(param)) {
+  //     const row = persons.getRowById(param);
+  //     if (!row) {
+  //       res.statusCode = 404;
+  //       res.end();
+  //     } else {
+  //       persons.deleteById(param);
+  //       res.statusCode = 204;
+  //       res.end();
+  //     }
+  //   } else {
+  //     res.statusCode = 400;
+  //     res.end('Wrong request');
+  //   }
+  //   return;
+  // }
+  // res.statusCode = 404;
+  // res.end('Wrong request');
 });
 
 server.listen(port, hostname, () => {
